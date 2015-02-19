@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -42,7 +41,7 @@ namespace Paint
         /// <summary>
         /// Dependecy property referente ao zoom da edição
         /// </summary>
-        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(ImageEditor));
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(ImageEditor), new UIPropertyMetadata(1.0));
 
         static void CurrentFigureChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -144,7 +143,6 @@ namespace Paint
                 bmp.EndInit();
                 image.Source = bmp;
 
-                
                 SetImage(image);
             }
             catch (Exception exception)
@@ -155,12 +153,15 @@ namespace Paint
 
         public void SetImage(Image img)
         {
-            canvas.Children.RemoveRange(0, canvas.Children.Count);
+            Clean();
             try
             {
                 canvas.Width = img.Source.Width;
                 canvas.Height = img.Source.Height;
                 canvas.Children.Add(img);
+                InkCanvas.SetTop(img, 0);
+                InkCanvas.SetLeft(img, 0);
+                canvas.InvalidateMeasure();
             }
             catch(NullReferenceException exception)
             {
