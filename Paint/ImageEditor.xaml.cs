@@ -39,6 +39,11 @@ namespace Paint
         /// </summary>
         public static readonly DependencyProperty ColorProperty = DependencyProperty.Register("Color", typeof(Color), typeof(ImageEditor), new UIPropertyMetadata(Colors.Black, ColorChanged));
 
+        /// <summary>
+        /// Dependecy property referente ao zoom da edição
+        /// </summary>
+        public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(ImageEditor));
+
         static void CurrentFigureChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             ImageEditor typedSender = sender as ImageEditor;
@@ -113,6 +118,15 @@ namespace Paint
             set { SetValue(ColorProperty, value); }
         }
 
+        /// <summary>
+        /// Propriedade referente ao zoom da área de edição
+        /// </summary>
+        public double Zoom
+        {
+            get { return (double)GetValue(ZoomProperty); }
+            set { SetValue(ZoomProperty, value); }
+        }
+
         public ImageEditor()
         {
             InitializeComponent();
@@ -130,6 +144,7 @@ namespace Paint
                 bmp.EndInit();
                 image.Source = bmp;
 
+                
                 SetImage(image);
             }
             catch (Exception exception)
@@ -140,6 +155,7 @@ namespace Paint
 
         public void SetImage(Image img)
         {
+            canvas.Children.RemoveRange(0, canvas.Children.Count);
             try
             {
                 canvas.Width = img.Source.Width;
@@ -160,6 +176,11 @@ namespace Paint
 
         public void Save(string path)
         {
+            // salva a transformação atual da área de edição (inkcanvas)
+            Transform transform = canvas.LayoutTransform;
+            // reset a atual transformação da área de edição
+            canvas.LayoutTransform = null;
+
             var size = new Size(canvas.ActualWidth, canvas.ActualHeight);
             canvas.Margin = new Thickness(0, 0, 0, 0);
 
@@ -172,6 +193,7 @@ namespace Paint
             encoder.Frames.Add(BitmapFrame.Create(rtb));
             FileStream fs = File.Open(@path, FileMode.Create);
             encoder.Save(fs);
+            canvas.LayoutTransform = transform;
             fs.Close();
         }
 

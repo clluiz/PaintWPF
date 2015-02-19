@@ -10,13 +10,14 @@
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="2" Width="520" Height="250">
-            <paint:ImageEditor x:Name="editor" BorderThickness="2" Width="520" Height="250" DrawingMode="Rectangle"/>
+        <Border Grid.Row="0" BorderBrush="Black" BorderThickness="2" Width="640" Height="360">
+            <paint:ImageEditor x:Name="editor" BorderThickness="2" Width="640" Height="360" DrawingMode="Rectangle" Zoom="0.5"/>
         </Border>
         
         <StackPanel Grid.Row="1">
             <Button Click="Button_Click" Height="50">Salvar</Button>
-            <Button Click="Button_Click_1" Height="50">Recarregar</Button>
+            <!--<Button Click="Button_Click_1" Height="50">Recarregar</Button>-->
+            <Slider Name="zoom" Maximum="1" Minimum="0.1" Value="1"/>
         </StackPanel>
         
 

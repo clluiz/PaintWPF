@@ -4,12 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Paint"
              d:DesignHeight="700" d:DesignWidth="700">
     
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <!--<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">-->
  
         <InkCanvas x:Name="canvas" Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp">
+
+            <InkCanvas.LayoutTransform>
+                <ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ImageEditor}}, Path=Zoom}" ScaleY="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ImageEditor}}, Path=Zoom}"/>
+            </InkCanvas.LayoutTransform>
         </InkCanvas>
 
-    </Grid>
+    <!--</Grid>-->
 </UserControl>

@@ -27,7 +27,7 @@ namespace PaintWPF
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            editor.SetImage("ra.jpg");
+            editor.SetImage("imagem.jpg");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -37,7 +37,7 @@ namespace PaintWPF
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            editor.SetImage("ra.jpg");
+            editor.SetImage("imagem.jpg");
         }
     }
 }
