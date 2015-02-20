@@ -27,12 +27,15 @@ namespace PaintWPF
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            editor.SetImage("imagem.jpg");
+           // editor.SetImage("imagem.jpg");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            editor.Save("raeditado.jpeg");
+            //editor.Save("raeditado.jpeg");
+            ///editada.Source = editor.GetImage().Source;
+            Boolean tem = editor.HasImage();
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

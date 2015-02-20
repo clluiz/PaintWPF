@@ -26,7 +26,7 @@ namespace Paint
         /// <summary>
         /// Dependencyproperty referente à figura que está sendo desenhada
         /// </summary>
-        public static readonly DependencyProperty DrawingModeProperty = DependencyProperty.Register("DrawingMode", typeof(DrawingModes), typeof(ImageEditor), new UIPropertyMetadata(DrawingModes.Free, CurrentFigureChanged));
+        public static readonly DependencyProperty DrawingModeProperty = DependencyProperty.Register("DrawingMode", typeof(DrawingModes), typeof(ImageEditor), new UIPropertyMetadata(DrawingModes.Free, DrawingModeChanged));
 
         /// <summary>
         /// Dependencyproperty da espessura do desenho
@@ -43,7 +43,12 @@ namespace Paint
         /// </summary>
         public static readonly DependencyProperty ZoomProperty = DependencyProperty.Register("Zoom", typeof(double), typeof(ImageEditor), new UIPropertyMetadata(1.0));
 
-        static void CurrentFigureChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Dependecy property referente a forma de desenhar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        static void DrawingModeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             ImageEditor typedSender = sender as ImageEditor;
             if (typedSender != null)
@@ -92,6 +97,7 @@ namespace Paint
         private Ellipse ellipse;
         private Line line;
         private Point startPoint;
+        private Boolean hasImage = false;
 
         public DrawingModes DrawingMode
         {
@@ -131,6 +137,10 @@ namespace Paint
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Abre uma imagem do disco
+        /// </summary>
+        /// <param name="path">Caminho da imagem</param>
         public void SetImage(string path)
         {
             try
@@ -151,6 +161,10 @@ namespace Paint
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="img">Imagem a ser editada</param>
         public void SetImage(Image img)
         {
             Clean();
@@ -161,7 +175,7 @@ namespace Paint
                 canvas.Children.Add(img);
                 InkCanvas.SetTop(img, 0);
                 InkCanvas.SetLeft(img, 0);
-                canvas.InvalidateMeasure();
+                hasImage = true;
             }
             catch(NullReferenceException exception)
             {
@@ -169,12 +183,20 @@ namespace Paint
             }
         }
 
+        /// <summary>
+        /// Limpa os desenhos e a imagem adicionada
+        /// </summary>
         public void Clean()
         {
+            hasImage = false;
             canvas.Strokes.Clear();
             canvas.Children.RemoveRange(0, canvas.Children.Count);
         }
 
+        /// <summary>
+        /// Salva a imagem editada no caminha especificado
+        /// </summary>
+        /// <param name="path">Local onde a imagem será salva</param>
         public void Save(string path)
         {
             // salva a transformação atual da área de edição (inkcanvas)
@@ -196,6 +218,42 @@ namespace Paint
             encoder.Save(fs);
             canvas.LayoutTransform = transform;
             fs.Close();
+        }
+        
+        /// <summary>
+        /// Pega o canvas com a imagem editada 
+        /// </summary>
+        /// <returns></returns>
+        public Image GetImage()
+        {
+            // salva a transformação atual da área de edição (inkcanvas)
+            Transform transform = canvas.LayoutTransform;
+            // reset a atual transformação da área de edição
+            canvas.LayoutTransform = null;
+
+            var size = new Size(canvas.ActualWidth, canvas.ActualHeight);
+            canvas.Margin = new Thickness(0, 0, 0, 0);
+
+            canvas.Measure(size);
+            canvas.Arrange(new Rect(size));
+
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)size.Width, (int)size.Height, 96d, 96d, PixelFormats.Default);
+            rtb.Render(canvas);
+
+            BitmapFrame bmpf = BitmapFrame.Create(rtb);
+            Image image = new Image();
+            image.Source = bmpf;
+            canvas.LayoutTransform = transform;
+            return image;
+        }
+
+        /// <summary>
+        /// Verifica se tem uma imagem sendo editada
+        /// </summary>
+        /// <returns></returns>
+        public Boolean HasImage()
+        {
+            return hasImage;
         }
 
         private void canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
